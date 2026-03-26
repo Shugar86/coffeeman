@@ -91,11 +91,17 @@ export async function placeOrder(raw: unknown): Promise<PlaceOrderResult> {
     if (!doc) {
       return { ok: false, error: `Товар #${line.productId} не найден` }
     }
-    const price = doc.price
+    const packSep = line.grindValue.lastIndexOf('___')
+    const baseGrind = packSep >= 0 ? line.grindValue.slice(0, packSep) : line.grindValue
+    const gramsRaw = packSep >= 0 ? line.grindValue.slice(packSep + 3) : '150'
+    const grams = gramsRaw === '500' ? 500 : 150
+    const packMult = grams >= 500 ? 500 / 150 : 1
+    const price = Math.round(Number(doc.price) * packMult * 100) / 100
+
     const grindOk =
       !doc.grindOptions?.length ||
-      doc.grindOptions.some((g) => g.value === line.grindValue) ||
-      line.grindValue === 'whole'
+      doc.grindOptions.some((g) => g.value === baseGrind) ||
+      baseGrind === 'whole'
     if (!grindOk) {
       return { ok: false, error: 'Некорректный вариант помола' }
     }

@@ -10,6 +10,7 @@
     "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
+    "verify:upload": "node scripts/verify-products-images.mjs",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload"
   },
   "dependencies": {
@@ -17,6 +18,7 @@
     "@payloadcms/next": "^3.80.0",
     "@payloadcms/richtext-lexical": "^3.80.0",
     "dotenv": "^16.6.1",
+    "framer-motion": "^11.18.2",
     "graphql": "^16.13.2",
     "next": "15.4.11",
     "nodemailer": "^8.0.4",

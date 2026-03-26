@@ -3,6 +3,7 @@ import type { GlobalConfig } from 'payload'
 export const PaymentSettings: GlobalConfig = {
   slug: 'payment-settings',
   label: 'Оплата (тексты)',
+  admin: { group: 'Сайт', description: 'Тексты чекаута; ключи провайдера — в .env.' },
   access: { read: () => true },
   fields: [
     { name: 'intro', type: 'richText' },

@@ -1,26 +1,125 @@
 @import "tailwindcss";
 
+/* CoffeeMan — палитра и токены по макетам */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --cm-cream: #f5f0e8;
+  --cm-cream-dark: #ebe4d8;
+  --cm-maroon: #6b0f1a;
+  --cm-maroon-deep: #8b0000;
+  --cm-maroon-hover: #7d1520;
+  --cm-maroon-active: #520c14;
+  --cm-maroon-band: #53040c;
+  --cm-olive: #7a7d5a;
+  --cm-olive-muted: #8f9270;
+  --cm-rose: #8b3a44;
+  --cm-ink: #1c1209;
+  --cm-ink-muted: #6b5744;
+  --cm-sand: #ede6dc;
+  --cm-sand-dark: #e0d6c8;
+  --cm-line: #ddd4c8;
+  --cm-line-strong: #c9bba8;
+  --cm-chip-solid: #6b5744;
+  --cm-footer-bg: #1c1209;
+  --cm-footer-text: #f0ebe6;
+  --background: var(--cm-cream);
+  --foreground: var(--cm-ink);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-cm-cream: var(--cm-cream);
+  --color-cm-cream-dark: var(--cm-cream-dark);
+  --color-cm-maroon: var(--cm-maroon);
+  --color-cm-maroon-deep: var(--cm-maroon-deep);
+  --color-cm-olive: var(--cm-olive);
+  --color-cm-ink: var(--cm-ink);
+  --color-cm-ink-muted: var(--cm-ink-muted);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-playfair);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: var(--cm-cream);
+    --foreground: var(--cm-ink);
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-playfair), Georgia, serif;
+}
+
+.coffee-site {
+  background-color: var(--cm-cream);
+  color: var(--cm-ink);
+}
+
+.cm-heading {
+  font-family: var(--font-playfair), Georgia, serif;
+  color: var(--cm-maroon);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.cm-prose {
+  line-height: 1.65;
+  color: var(--cm-ink);
+}
+
+.cm-input {
+  border-radius: 0.5rem;
+  border: 1px solid var(--cm-line-strong);
+  background-color: #fff;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--cm-ink);
+}
+
+.cm-input:focus {
+  outline: 2px solid var(--cm-maroon);
+  outline-offset: 1px;
+}
+
+/* Фон «ботаника» для карточек товара */
+.cm-botanical-bg {
+  background-color: var(--cm-cream);
+  background-image: url("/images/botanical-pattern.svg");
+  background-size: 200px 200px;
+  color: var(--cm-olive-muted);
+}
+
+/* Polaroid */
+.cm-polaroid {
+  box-shadow:
+    0 4px 6px -1px rgb(28 18 9 / 0.12),
+    0 12px 24px -4px rgb(28 18 9 / 0.15);
+  background: #fff;
+  padding: 0.65rem 0.65rem 2rem;
+  border-radius: 2px;
+}
+
+.cm-polaroid-inner {
+  overflow: hidden;
+  background: var(--cm-sand);
+}
+
+/* Разделитель «рваная бумага» — цвет задаётся через text-* на родителе */
+.cm-torn-edge {
+  display: block;
+  width: 100%;
+  height: 2rem;
+  color: var(--cm-cream);
+  background: transparent;
+}
+
+@media (min-width: 768px) {
+  .cm-torn-edge {
+    height: 2.5rem;
+  }
 }

@@ -1,8 +1,11 @@
-import { CatalogFilters } from '@/components/catalog/CatalogFilters'
+import { CatalogToolbar } from '@/components/catalog/CatalogToolbar'
 import { ProductCard } from '@/components/catalog/ProductCard'
+import { CoffeeButton } from '@/components/ui/Button'
+import { parseCatalogSegment, segmentToQuery } from '@/lib/catalog-segment'
+import { countrySlugToRegion } from '@/lib/country-regions'
+import { grindParamMatchesProduct } from '@/lib/grind-filters'
 import { getPayloadClient } from '@/lib/payload'
 import type { Where } from 'payload'
-import Link from 'next/link'
 import type { ReactNode } from 'react'
 
 const PAGE_SIZE = 12
@@ -24,11 +27,13 @@ export default async function CatalogPage({
   const q = sp(p, 'q')?.trim()
   const countrySlug = sp(p, 'country')
   const categorySlug = sp(p, 'category')
-  const productType = sp(p, 'type') as 'coffee' | 'tea' | undefined
   const taste = sp(p, 'taste')
   const priceMin = sp(p, 'priceMin')
   const priceMax = sp(p, 'priceMax')
-  const sort = sp(p, 'sort') || 'popular'
+  const sortParam = sp(p, 'sort') || 'popular'
+  const segmentRaw = parseCatalogSegment(sp(p, 'segment'))
+  const region = sp(p, 'region') || 'all'
+  const grind = sp(p, 'grind')
 
   const payload = await getPayloadClient()
 
@@ -37,6 +42,9 @@ export default async function CatalogPage({
     payload.find({ collection: 'categories', limit: 200, sort: 'name' }),
   ])
 
+  const minPrice = 0
+  const maxPrice = 15000
+
   const countryId = countrySlug
     ? countries.docs.find((c) => c.slug === countrySlug)?.id
     : undefined
@@ -44,20 +52,41 @@ export default async function CatalogPage({
     ? categories.docs.find((c) => c.slug === categorySlug)?.id
     : undefined
 
-  const andClause: Where[] = []
+  const segQuery = segmentToQuery(segmentRaw)
+  let productType: 'coffee' | 'tea' | undefined = segQuery.productType
+  if (!productType) {
+    const t = sp(p, 'type') as 'coffee' | 'tea' | undefined
+    if (t === 'coffee' || t === 'tea') productType = t
+  }
+
+  const andClause: Where[] = [...segQuery.extraWhere]
 
   if (q) {
     andClause.push({ title: { contains: q } })
   }
+
   if (countryId != null) {
     andClause.push({ country: { equals: countryId } })
+  } else if (region && region !== 'all') {
+    const ids = countries.docs
+      .filter((c) => countrySlugToRegion(c.slug) === region)
+      .map((c) => c.id)
+    if (ids.length > 0) {
+      andClause.push({ country: { in: ids } })
+    }
   }
+
   if (categoryId != null) {
     andClause.push({ category: { equals: categoryId } })
   }
-  if (productType === 'coffee' || productType === 'tea') {
-    andClause.push({ productType: { equals: productType } })
+
+  if (segmentRaw === 'microlot') {
+    const mic = categories.docs.find((c) => c.slug === 'microlot')
+    if (mic) {
+      andClause.push({ category: { equals: mic.id } })
+    }
   }
+
   if (taste) {
     andClause.push({ tastes: { contains: taste } })
   }
@@ -70,51 +99,84 @@ export default async function CatalogPage({
     if (!Number.isNaN(n)) andClause.push({ price: { less_than_equal: n } })
   }
 
+  if (productType === 'coffee' || productType === 'tea') {
+    andClause.push({ productType: { equals: productType } })
+  }
+
   const where: Where = andClause.length ? { and: andClause } : {}
 
-  let sortField: string = '-popularity'
-  if (sort === 'new') sortField = '-createdAt'
-  else if (sort === 'price_asc') sortField = 'price'
-  else if (sort === 'price_desc') sortField = '-price'
+  let sortField = '-popularity'
+  if (segmentRaw === 'new') {
+    sortField = '-createdAt'
+  } else if (sortParam === 'new') {
+    sortField = '-createdAt'
+  } else if (sortParam === 'price_asc') {
+    sortField = 'price'
+  } else if (sortParam === 'price_desc') {
+    sortField = '-price'
+  } else if (segQuery.sort && segmentRaw === 'popular') {
+    sortField = segQuery.sort
+  }
 
   const result = await payload.find({
     collection: 'products',
     where,
-    limit: PAGE_SIZE,
-    page,
+    limit: grind ? 200 : PAGE_SIZE,
+    page: grind ? 1 : page,
     sort: sortField,
     depth: 1,
   })
 
-  const totalPages = result.totalPages || 1
+  let docs = result.docs
+  let totalShown = result.totalDocs
+  let totalPages = result.totalPages || 1
+
+  if (grind) {
+    const filtered = docs.filter((d) => grindParamMatchesProduct(grind, d.grindOptions))
+    totalShown = filtered.length
+    docs = filtered
+    totalPages = 1
+  }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-3xl font-semibold">Каталог</h1>
-      <CatalogFilters
+    <div className="mx-auto max-w-6xl px-4 py-12 md:py-14">
+      <h1 className="cm-heading flex flex-wrap items-baseline gap-1 text-3xl md:text-5xl">
+        <span>Каталог кофе</span>
+        <sup className="text-lg font-semibold text-[var(--cm-maroon)] md:text-2xl">({totalShown})</sup>
+      </h1>
+
+      <CatalogToolbar
         countries={countries.docs.map((c) => ({ id: String(c.id), name: c.name, slug: c.slug }))}
         categories={categories.docs.map((c) => ({ id: String(c.id), name: c.name, slug: c.slug }))}
+        priceBounds={{ min: minPrice, max: maxPrice }}
         initial={{
           q: q || '',
           country: countrySlug || '',
           category: categorySlug || '',
-          type: productType || '',
           taste: taste || '',
-          priceMin: priceMin || '',
-          priceMax: priceMax || '',
-          sort: sort || 'popular',
+          priceMin: priceMin || String(minPrice),
+          priceMax: priceMax || String(maxPrice),
+          sort: sortParam,
+          segment: segmentRaw,
+          region: region || 'all',
+          grind: grind || '',
         }}
       />
-      <p className="mt-2 text-sm text-neutral-500">Найдено: {result.totalDocs}</p>
+
+      <p className="mt-4 text-sm text-[var(--cm-ink-muted)]">
+        Найдено: {totalShown}
+        {grind ? ' (до 200 позиций с учётом помола)' : null}
+      </p>
+
       <ul className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {result.docs.map((product) => (
+        {docs.map((product) => (
           <li key={product.id}>
             <ProductCard product={product} />
           </li>
         ))}
       </ul>
-      {result.docs.length === 0 ? (
-        <p className="mt-10 text-neutral-600 dark:text-neutral-400">Ничего не найдено — сбросьте фильтры.</p>
+      {docs.length === 0 ? (
+        <p className="mt-10 text-[var(--cm-ink-muted)]">Ничего не найдено — сбросьте фильтры.</p>
       ) : null}
       <nav className="mt-10 flex flex-wrap items-center justify-center gap-2">
         {page > 1 ? (
@@ -122,7 +184,7 @@ export default async function CatalogPage({
             Назад
           </PageLink>
         ) : null}
-        <span className="text-sm text-neutral-600">
+        <span className="text-sm text-[var(--cm-ink-muted)]">
           Стр. {page} / {totalPages}
         </span>
         {page < totalPages ? (
@@ -152,11 +214,8 @@ function PageLink({
   }
   usp.set('page', String(page))
   return (
-    <Link
-      href={`/catalog?${usp.toString()}`}
-      className="rounded-full border border-neutral-300 px-4 py-2 text-sm hover:bg-neutral-100 dark:border-neutral-600 dark:hover:bg-neutral-800"
-    >
+    <CoffeeButton href={`/catalog?${usp.toString()}`} variant="outline" size="sm">
       {children}
-    </Link>
+    </CoffeeButton>
   )
 }

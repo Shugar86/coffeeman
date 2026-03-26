@@ -2,8 +2,16 @@ import { getPayloadClient } from '@/lib/payload'
 import { NextResponse } from 'next/server'
 
 /**
- * Заглушка под CloudPayments / ЮKassa: передайте orderNumber и подпись в теле.
- * Реальную проверку подписи провайдера добавьте при интеграции.
+ * Заглушка под платёжного провайдера (волна C — после вёрстки и админки).
+ *
+ * Сейчас: JSON `{ orderNumber, paid?, signature }`, где `signature === PAYMENT_WEBHOOK_SECRET`.
+ *
+ * Дальше по выбору провайдера:
+ * - **ЮKassa**: проверка IP + `notification` object, подпись по документации, статусы `succeeded`.
+ * - **CloudPayments**: HMAC от тела запроса с `Content-HMAC` / `X-Content-HMAC`, обработка `Pay` / `Confirm`.
+ *
+ * Общий поток: найти заказ по `orderNumber` (или внешнему `paymentId` в отдельном поле), выставить
+ * `paid` и при необходимости `status`.
  */
 export async function POST(request: Request) {
   const secret = process.env.PAYMENT_WEBHOOK_SECRET

@@ -11,6 +11,8 @@ export type CartLine = {
   quantity: number
   grindLabel: string
   grindValue: string
+  /** Превью из первого изображения товара (если было при добавлении) */
+  imageUrl?: string | null
 }
 
 type CartState = {

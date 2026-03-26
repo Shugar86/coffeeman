@@ -11,6 +11,9 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+# .env в .dockerignore — Payload требует непустой secret при импорте конфига на этапе сборки
+ARG PAYLOAD_SECRET=coffeeman-docker-build-only-secret-min-32chars
+ENV PAYLOAD_SECRET=${PAYLOAD_SECRET}
 RUN npm run build
 
 FROM base AS runner

@@ -2,9 +2,12 @@ import type { CollectionConfig } from 'payload'
 
 export const Countries: CollectionConfig = {
   slug: 'countries',
+  labels: { singular: 'Страна', plural: 'Страны' },
   admin: {
     useAsTitle: 'name',
+    group: 'Магазин',
     defaultColumns: ['name', 'code', 'slug'],
+    description: 'Фильтр по стране происхождения в каталоге.',
   },
   fields: [
     { name: 'name', type: 'text', required: true },

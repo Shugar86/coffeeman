@@ -2,10 +2,13 @@ import type { CollectionConfig } from 'payload'
 
 export const Products: CollectionConfig = {
   slug: 'products',
+  labels: { singular: 'Товар', plural: 'Товары' },
   admin: {
     useAsTitle: 'title',
+    group: 'Магазин',
     defaultColumns: ['title', 'price', 'productType', 'updatedAt'],
     listSearchableFields: ['title', 'slug'],
+    description: 'Каталог: цена, фильтры, галерея, сенсорика.',
   },
   fields: [
     { name: 'title', type: 'text', required: true },
@@ -92,6 +95,10 @@ export const Products: CollectionConfig = {
       type: 'upload',
       relationTo: 'media',
       hasMany: true,
+      admin: {
+        description:
+          'Галерея (несколько файлов). Тип hasMany + upload в Payload 3; витрина читает массив как в [slug]/page.tsx.',
+      },
     },
     {
       name: 'description',

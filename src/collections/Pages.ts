@@ -2,10 +2,13 @@ import type { CollectionConfig } from 'payload'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
+  labels: { singular: 'Страница', plural: 'Страницы' },
   admin: {
     useAsTitle: 'title',
+    group: 'Контент',
     defaultColumns: ['title', 'slug', 'updatedAt'],
     listSearchableFields: ['title', 'slug'],
+    description: 'Посадочные страницы из блоков.',
   },
   fields: [
     { name: 'title', type: 'text', required: true },

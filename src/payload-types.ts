@@ -146,6 +146,8 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * Доступ в админку и роли.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -172,6 +174,8 @@ export interface User {
   collection: 'users';
 }
 /**
+ * Изображения для товаров, блога и слайдера.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
@@ -191,6 +195,8 @@ export interface Media {
   focalY?: number | null;
 }
 /**
+ * Иерархия категорий каталога.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories".
  */
@@ -206,6 +212,8 @@ export interface Category {
   createdAt: string;
 }
 /**
+ * Фильтр по стране происхождения в каталоге.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "countries".
  */
@@ -221,6 +229,8 @@ export interface Country {
   createdAt: string;
 }
 /**
+ * Каталог: цена, фильтры, галерея, сенсорика.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "products".
  */
@@ -260,6 +270,9 @@ export interface Product {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Галерея (несколько файлов). Тип hasMany + upload в Payload 3; витрина читает массив как в [slug]/page.tsx.
+   */
   images?: (number | Media)[] | null;
   description?: {
     root: {
@@ -280,6 +293,8 @@ export interface Product {
   createdAt: string;
 }
 /**
+ * Блог: текст, обложка и поля для поисковых сниппетов.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "articles".
  */
@@ -287,8 +302,21 @@ export interface Article {
   id: number;
   title: string;
   slug: string;
+  /**
+   * Дата публикации в ленте
+   */
   publishedAt?: string | null;
+  /**
+   * Обложка карточки и Open Graph
+   */
   cover?: (number | null) | Media;
+  /**
+   * Доп. фото для слайдера на странице статьи
+   */
+  gallery?: (number | Media)[] | null;
+  /**
+   * Краткий анонс (при необходимости в списке)
+   */
   excerpt?: string | null;
   content: {
     root: {
@@ -305,12 +333,20 @@ export interface Article {
     };
     [k: string]: unknown;
   };
+  /**
+   * Title для поиска; если пусто — используется заголовок статьи
+   */
   metaTitle?: string | null;
+  /**
+   * Meta description (рекомендуется до ~160 символов)
+   */
   metaDescription?: string | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
+ * Точки на странице «Кофейни».
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "cafes".
  */
@@ -319,6 +355,18 @@ export interface Cafe {
   name: string;
   slug: string;
   address: string;
+  /**
+   * Телефон точки (если пусто — общий из настроек сайта)
+   */
+  phone?: string | null;
+  /**
+   * Ссылка «Посмотреть меню» (внешний PDF/сайт)
+   */
+  menuUrl?: string | null;
+  /**
+   * Порядок на странице кофеен
+   */
+  sort?: number | null;
   city?: string | null;
   location?: {
     lat?: number | null;
@@ -348,6 +396,8 @@ export interface Cafe {
   createdAt: string;
 }
 /**
+ * Цифры и тезисы для блока B2B на сайте.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "b2b-facts".
  */
@@ -361,6 +411,8 @@ export interface B2BFact {
   createdAt: string;
 }
 /**
+ * Посадочные страницы из блоков.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
@@ -404,35 +456,58 @@ export interface Page {
   createdAt: string;
 }
 /**
+ * Обработка заказов: статус, оплата, позиции и контакты.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "orders".
  */
 export interface Order {
   id: number;
+  /**
+   * Генерируется при создании.
+   */
   orderNumber?: string | null;
   status: 'new' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  /**
+   * Отметьте после подтверждения оплаты.
+   */
   paid?: boolean | null;
   paymentMethod?: ('online' | 'on_site') | null;
   deliveryType?: ('courier' | 'pickup' | 'post') | null;
   customerName: string;
   customerPhone: string;
   customerEmail?: string | null;
+  /**
+   * Полный адрес или пункт выдачи.
+   */
   address?: string | null;
+  /**
+   * Пожелания клиента.
+   */
   comment?: string | null;
+  /**
+   * Состав заказа: товар, помол, цена и количество.
+   */
   items: {
     product?: (number | null) | Product;
     title: string;
+    /**
+     * Подпись помола для оператора
+     */
     grindLabel?: string | null;
     unitPrice: number;
     quantity: number;
     id?: string | null;
   }[];
+  /**
+   * Итоговая сумма заказа (₽).
+   */
   total: number;
   updatedAt: string;
   createdAt: string;
 }
 /**
- * Снимки корзин для аналитики
+ * Снимки корзин для аналитики (не публичная витрина).
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "cart-snapshots".
@@ -667,6 +742,7 @@ export interface ArticlesSelect<T extends boolean = true> {
   slug?: T;
   publishedAt?: T;
   cover?: T;
+  gallery?: T;
   excerpt?: T;
   content?: T;
   metaTitle?: T;
@@ -682,6 +758,9 @@ export interface CafesSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
   address?: T;
+  phone?: T;
+  menuUrl?: T;
+  sort?: T;
   city?: T;
   location?:
     | T
@@ -818,6 +897,8 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
+ * Контакты, слайдер главной, тексты страниц.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings".
  */
@@ -882,17 +963,82 @@ export interface SiteSetting {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Заголовок секции под hero
+   */
+  homeStoryHeading?: string | null;
+  /**
+   * Текст слева (пара абзацев)
+   */
+  homeStoryBody?: string | null;
+  homePolaroids?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  homeStats?:
+    | {
+        /**
+         * Напр. 3, 126т, 100+
+         */
+        value: string;
+        /**
+         * Подпись под числом
+         */
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Фото в шапке страницы «О нас»
+   */
+  aboutHeroImage?: (number | null) | Media;
+  aboutPolaroids?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  aboutStats?:
+    | {
+        value: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  masterclasses?:
+    | {
+        title: string;
+        text: string;
+        image?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * PDF/файл прайса для кнопки на странице B2B
+   */
+  b2bPriceList?: (number | null) | Media;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
+ * Контент страницы «Доставка».
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "delivery-info".
  */
 export interface DeliveryInfo {
   id: number;
   title?: string | null;
-  body: {
+  /**
+   * Заголовок левой колонки
+   */
+  deliveryColumnTitle?: string | null;
+  /**
+   * Условия доставки (список в редакторе)
+   */
+  deliveryBody?: {
     root: {
       type: string;
       children: {
@@ -906,11 +1052,82 @@ export interface DeliveryInfo {
       version: number;
     };
     [k: string]: unknown;
-  };
+  } | null;
+  pickupColumnTitle?: string | null;
+  pickupBody?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Выделенный блок (напр. бесплатная доставка)
+   */
+  highlightTitle?: string | null;
+  highlightBody?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  paymentTitle?: string | null;
+  paymentBody?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Legacy: полный текст одной колонкой, если структурированные поля пусты
+   */
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
+ * Тексты чекаута; ключи провайдера — в .env.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payment-settings".
  */
@@ -941,6 +1158,8 @@ export interface PaymentSetting {
   createdAt?: string | null;
 }
 /**
+ * Базовые title/description/OG для всего сайта.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "seo".
  */
@@ -979,6 +1198,44 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         link?: T;
         id?: T;
       };
+  homeStoryHeading?: T;
+  homeStoryBody?: T;
+  homePolaroids?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  homeStats?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  aboutHeroImage?: T;
+  aboutPolaroids?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  aboutStats?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  masterclasses?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        image?: T;
+        id?: T;
+      };
+  b2bPriceList?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -989,6 +1246,14 @@ export interface SiteSettingsSelect<T extends boolean = true> {
  */
 export interface DeliveryInfoSelect<T extends boolean = true> {
   title?: T;
+  deliveryColumnTitle?: T;
+  deliveryBody?: T;
+  pickupColumnTitle?: T;
+  pickupBody?: T;
+  highlightTitle?: T;
+  highlightBody?: T;
+  paymentTitle?: T;
+  paymentBody?: T;
   body?: T;
   updatedAt?: T;
   createdAt?: T;

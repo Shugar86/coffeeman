@@ -3,12 +3,21 @@ import { Header } from '@/components/site/Header'
 import { getPayloadClient } from '@/lib/payload'
 import React from 'react'
 
+/** Витрина тянет Payload/Postgres — без этого `next build` в Docker падает без БД на этапе сборки. */
+export const dynamic = 'force-dynamic'
+
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
   const payload = await getPayloadClient()
   const site = await payload.findGlobal({ slug: 'site-settings', depth: 0 })
 
+  const socialLinks =
+    site.socialLinks?.map((row) => ({
+      label: row.label,
+      url: row.url,
+    })) ?? []
+
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="coffee-site flex min-h-screen flex-col">
       <Header />
       <div className="flex-1">{children}</div>
       <Footer
@@ -16,6 +25,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         phone={site.phone}
         email={site.email}
         address={site.address}
+        socialLinks={socialLinks}
       />
     </div>
   )

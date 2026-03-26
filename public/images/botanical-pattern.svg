@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <defs>
+    <pattern id="leaf" patternUnits="userSpaceOnUse" width="200" height="200">
+      <path fill="none" stroke="currentColor" stroke-width="0.6" opacity="0.12" d="M20 160 Q50 80 90 100 T160 40 M40 180 Q70 100 110 120 M0 120 Q60 60 100 90 M120 200 Q140 100 180 130 M160 20 Q130 90 100 70"/>
+      <ellipse cx="45" cy="95" rx="12" ry="6" fill="currentColor" opacity="0.06" transform="rotate(-35 45 95)"/>
+      <ellipse cx="150" cy="150" rx="10" ry="5" fill="currentColor" opacity="0.05" transform="rotate(20 150 150)"/>
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#leaf)"/>
+</svg>

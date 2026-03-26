@@ -1,72 +1,96 @@
 'use client'
 
+import { CoffeeButton } from '@/components/ui/Button'
+import { Chip } from '@/components/ui/Chip'
+import { formatPackGrindValue, PACK_GRAMS, packMultiplier, type PackGrams } from '@/lib/pack-pricing'
+import { getMediaUrl } from '@/lib/media-url'
 import { useCartStore } from '@/stores/cart-store'
 import type { Product } from '@/payload-types'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 type Props = {
   product: Product
 }
 
+/**
+ * Помол (чипы), фасовка 150/500 г, цена с множителем; grindValue с суффиксом `___grams` для заказа.
+ */
 export function AddToCartSection({ product }: Props) {
   const addItem = useCartStore((s) => s.addItem)
-  const grindOptions = product.grindOptions ?? []
-  const defaultGrind =
-    grindOptions[0] != null
-      ? { label: grindOptions[0].label, value: grindOptions[0].value }
-      : { label: 'Стандарт', value: 'whole' }
-
-  const [grind, setGrind] = useState(defaultGrind)
+  const [grind, setGrind] = useState<{ label: string; value: string }>(() => {
+    const g = product.grindOptions?.[0]
+    return g != null ? { label: g.label, value: g.value } : { label: 'В зерне', value: 'whole' }
+  })
+  const [grams, setGrams] = useState<PackGrams>(150)
   const [msg, setMsg] = useState<string | null>(null)
 
-  const options =
-    grindOptions.length === 0
+  const options = useMemo(() => {
+    const go = product.grindOptions ?? []
+    return go.length === 0
       ? [{ label: 'В зерне', value: 'whole' }]
-      : grindOptions.map((g) => ({ label: g.label, value: g.value }))
+      : go.map((g) => ({ label: g.label, value: g.value }))
+  }, [product.grindOptions])
 
   const pid = typeof product.id === 'number' ? product.id : Number(product.id)
+  const basePrice = Number(product.price) || 0
+  const mult = packMultiplier(grams)
+  const displayPrice = Math.round(basePrice * mult * 100) / 100
+
+  const firstImage = product.images?.[0]
+  const imageUrl = getMediaUrl(typeof firstImage === 'object' ? firstImage : null)
+
+  const compositeValue = formatPackGrindValue(grind.value, grams)
+  const labelWithPack = `${grams} г · ${grind.label}`
 
   return (
-    <div className="space-y-4">
-      {options.length > 0 ? (
-        <div>
-          <label className="text-sm font-medium text-neutral-700 dark:text-neutral-300">Помол</label>
-          <select
-            value={grind.value}
-            onChange={(e) => {
-              const opt = options.find((o) => o.value === e.target.value)
-              if (opt) setGrind(opt)
-            }}
-            className="mt-1 w-full rounded-lg border border-neutral-300 bg-white px-3 py-2 dark:border-neutral-600 dark:bg-neutral-950"
-          >
-            {options.map((o) => (
-              <option key={o.value} value={o.value}>
+    <div className="space-y-6">
+      <div>
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--cm-ink-muted)]">Помол</p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {options.map((o) => (
+            <button key={o.value} type="button" onClick={() => setGrind(o)}>
+              <Chip variant={o.value === grind.value ? 'solid' : 'outline'} size="sm">
                 {o.label}
-              </option>
-            ))}
-          </select>
+              </Chip>
+            </button>
+          ))}
         </div>
-      ) : null}
-      <button
+      </div>
+      <div>
+        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--cm-ink-muted)]">Фасовка</p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {PACK_GRAMS.map((g) => (
+            <button key={g} type="button" onClick={() => setGrams(g)}>
+              <Chip variant={g === grams ? 'solid' : 'outline'} size="sm">
+                {g} г
+              </Chip>
+            </button>
+          ))}
+        </div>
+      </div>
+      <p className="text-3xl font-bold text-[var(--cm-maroon)]">{displayPrice} ₽</p>
+      <CoffeeButton
         type="button"
+        className="w-full"
         onClick={() => {
           addItem({
+            key: `${pid}::${compositeValue}`,
             productId: pid,
             slug: product.slug,
             title: product.title,
-            unitPrice: product.price,
+            unitPrice: displayPrice,
             quantity: 1,
-            grindLabel: grind.label,
-            grindValue: grind.value,
+            grindLabel: labelWithPack,
+            grindValue: compositeValue,
+            imageUrl,
           })
           setMsg('Добавлено в корзину')
           setTimeout(() => setMsg(null), 2500)
         }}
-        className="w-full rounded-full bg-amber-700 py-3 text-center text-sm font-semibold text-white hover:bg-amber-600"
       >
-        В корзину
-      </button>
-      {msg ? <p className="text-center text-sm text-green-700 dark:text-green-400">{msg}</p> : null}
+        Добавить в корзину
+      </CoffeeButton>
+      {msg ? <p className="text-center text-sm text-[var(--cm-maroon)]">{msg}</p> : null}
     </div>
   )
 }
