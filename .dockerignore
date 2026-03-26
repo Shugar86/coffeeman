@@ -1,0 +1,7 @@
+node_modules
+.next
+.git
+design/screenshots/*.pdf
+*.md
+.env
+.env.local

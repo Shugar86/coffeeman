@@ -1,0 +1,25 @@
+# Локальная PostgreSQL для разработки (план этап 0 — вариант A: Next на хосте).
+# Запуск: docker compose up -d
+# Строка в .env: DATABASE_URL=postgres://coffeeman:coffeeman@127.0.0.1:5433/coffeeman
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: coffeeman-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: coffeeman
+      POSTGRES_PASSWORD: coffeeman
+      POSTGRES_DB: coffeeman
+    ports:
+      - '5433:5432'
+    volumes:
+      - coffeeman_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U coffeeman -d coffeeman']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  coffeeman_pgdata:
