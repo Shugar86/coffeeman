@@ -123,3 +123,33 @@ body {
     height: 2.5rem;
   }
 }
+
+/* Лёгкий paper noise на фоне — придаёт "винтажности" */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Пунктирная линия по центру страницы (опционально, декоративная) */
+.cm-guide-line {
+  position: fixed;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--cm-maroon) 0,
+    var(--cm-maroon) 4px,
+    transparent 4px,
+    transparent 12px
+  );
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 1;
+}

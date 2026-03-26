@@ -108,23 +108,40 @@ export function HeroSlider({ slides, className = '' }: Props) {
           </motion.div>
         </AnimatePresence>
       </div>
+      {/* Scroll hint */}
+      <div className="absolute bottom-8 left-1/2 z-20 -translate-x-1/2">
+        <a
+          href="#story"
+          className="flex flex-col items-center gap-1 text-white/80 transition hover:text-white"
+          aria-label="Прокрутить вниз"
+        >
+          <svg width="24" height="24" viewBox="0 0 15.33 9.57" fill="currentColor" className="animate-bounce">
+            <path d="M8.45 9.57c-5.19 0-8.33-3.6-8.45-9.57h2.62c.09 4.39 2.08 6.25 3.61 6.63V0h2.52v3.79c1.47-.16 3.02-1.88 3.54-3.79h2.48c-.19.98-.58 1.9-1.14 2.73-.56.82-1.29 1.52-2.13 2.05.94.49 1.77 1.16 2.43 1.99.66.83 1.14 1.78 1.41 2.8h-2.72c-.57-1.82-1.98-3.23-3.87-3.42v3.42h-.3z"/>
+          </svg>
+        </a>
+      </div>
+
       {slides.length > 1 ? (
         <>
           <button
             type="button"
             aria-label="Предыдущий слайд"
-            className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/35 px-3 py-2 text-white backdrop-blur-sm hover:bg-black/50"
+            className="absolute left-4 top-1/2 z-20 hidden -translate-y-1/2 rounded-full bg-white/10 p-2 text-white backdrop-blur-sm transition hover:bg-white/20 md:flex"
             onClick={() => go(-1)}
           >
-            ‹
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
           </button>
           <button
             type="button"
             aria-label="Следующий слайд"
-            className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/35 px-3 py-2 text-white backdrop-blur-sm hover:bg-black/50"
+            className="absolute right-4 top-1/2 z-20 hidden -translate-y-1/2 rounded-full bg-white/10 p-2 text-white backdrop-blur-sm transition hover:bg-white/20 md:flex"
             onClick={() => go(1)}
           >
-            ›
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
           </button>
         </>
       ) : null}

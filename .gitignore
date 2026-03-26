@@ -38,6 +38,7 @@ yarn-error.log*
 
 # large design exports
 design/screenshots/*.pdf
+design/CoffeeMan*
 
 # vercel
 .vercel
