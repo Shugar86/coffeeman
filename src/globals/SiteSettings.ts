@@ -46,17 +46,20 @@ export const SiteSettings: GlobalConfig = {
         {
           name: 'homeStoryHeading',
           type: 'text',
+          defaultValue: 'Каждая кофейня — как чашка кофе',
           admin: { description: 'Заголовок секции под hero' },
         },
         {
           name: 'homeStoryBody',
           type: 'textarea',
-          admin: { description: 'Текст слева (пара абзацев)' },
+          defaultValue:
+            'Уют, аромат и люди. Мы обжариваем зерно с заботой о вкусе. Заходите в наши точки или заказывайте домой — как вам удобнее.',
+          admin: { description: 'Текст справа на десктопе (на мобиле — над фото)' },
         },
         {
           name: 'homePolaroids',
           type: 'array',
-          label: 'Polaroid-фото справа',
+          label: 'Polaroid-фото слева на главной',
           fields: [{ name: 'image', type: 'upload', relationTo: 'media', required: true }],
         },
       ],

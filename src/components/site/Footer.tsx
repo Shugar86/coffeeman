@@ -24,6 +24,13 @@ const clientLinks = [
   { href: '/b2b', label: 'Оптовым клиентам' },
 ]
 
+const teaLinks = [
+  { href: '/catalog?q=чай', label: 'Чёрный чай' },
+  { href: '/catalog?q=зелёный', label: 'Зелёный чай' },
+  { href: '/catalog?q=травяной', label: 'Травяные чаи' },
+  { href: '/catalog', label: 'Все напитки' },
+]
+
 /**
  * Подвал по макетам article / main page: тёмный блок, колонки, соцсети.
  */
@@ -34,18 +41,10 @@ export function Footer({ companyName, phone, email, address, socialLinks }: Prop
   return (
     <footer className="mt-auto bg-[var(--cm-footer-bg)] text-[var(--cm-footer-text)]">
       <div className="mx-auto max-w-6xl px-4 py-14">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-          <div>
+        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="sm:col-span-2 lg:col-span-1">
             <p className="font-display text-2xl font-semibold tracking-tight text-white">{brand}</p>
             {address ? <p className="mt-4 max-w-xs text-sm leading-relaxed text-[var(--cm-footer-text)]/85">{address}</p> : null}
-            {phone ? <p className="mt-3 text-sm">Тел.: {phone}</p> : null}
-            {email ? (
-              <p className="mt-1 text-sm">
-                <Link href={`mailto:${email}`} className="underline-offset-2 hover:underline">
-                  {email}
-                </Link>
-              </p>
-            ) : null}
           </div>
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/90">Компания</p>
@@ -72,8 +71,38 @@ export function Footer({ companyName, phone, email, address, socialLinks }: Prop
             </ul>
           </div>
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/90">Соцсети</p>
-            <ul className="mt-4 flex flex-wrap gap-3">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/90">Чай</p>
+            <ul className="mt-4 space-y-2 text-sm">
+              {teaLinks.map((l) => (
+                <li key={l.href + l.label}>
+                  <Link href={l.href} className="text-[var(--cm-footer-text)]/90 hover:text-white">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="sm:col-span-2 lg:col-span-1 lg:text-right">
+            {phone ? (
+              <p className="text-sm">
+                <span className="text-xs font-bold uppercase tracking-[0.2em] text-white/90">Телефон</span>
+                <br />
+                <Link href={`tel:${phone.replace(/\s/g, '')}`} className="mt-2 inline-block text-[var(--cm-footer-text)]/90 hover:text-white">
+                  {phone}
+                </Link>
+              </p>
+            ) : null}
+            {email ? (
+              <p className={`text-sm ${phone ? 'mt-4' : ''}`}>
+                <span className="text-xs font-bold uppercase tracking-[0.2em] text-white/90">Email</span>
+                <br />
+                <Link href={`mailto:${email}`} className="mt-2 inline-block underline-offset-2 hover:underline">
+                  {email}
+                </Link>
+              </p>
+            ) : null}
+            <p className="mt-6 text-xs font-bold uppercase tracking-[0.2em] text-white/90 lg:text-right">Соцсети</p>
+            <ul className="mt-3 flex flex-wrap gap-3 lg:justify-end">
               {(socialLinks ?? []).map((s) => (
                 <li key={s.url}>
                   <Link
@@ -88,7 +117,7 @@ export function Footer({ companyName, phone, email, address, socialLinks }: Prop
               ))}
             </ul>
             {(socialLinks?.length ?? 0) === 0 ? (
-              <p className="mt-2 text-sm text-[var(--cm-footer-text)]/60">Добавьте ссылки в админке → Настройки сайта.</p>
+              <p className="mt-2 text-sm text-[var(--cm-footer-text)]/60 lg:text-right">Добавьте ссылки в админке → Настройки сайта.</p>
             ) : null}
           </div>
         </div>

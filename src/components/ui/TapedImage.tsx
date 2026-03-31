@@ -44,8 +44,8 @@ export function TapedImage({
       />
 
       {/* Рамка и фото */}
-      <div className="relative overflow-hidden rounded-lg bg-white p-2 shadow-lg">
-        <div className="relative aspect-[16/10] overflow-hidden rounded">
+      <div className="relative overflow-hidden rounded-lg bg-white p-2.5 pb-3 shadow-[0_8px_24px_rgba(45,20,20,0.12)]">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-sm sm:aspect-[16/10]">
           <Image
             src={src}
             alt={alt}

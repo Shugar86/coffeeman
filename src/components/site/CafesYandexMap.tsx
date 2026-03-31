@@ -94,7 +94,7 @@ export function CafesYandexMap({ cafes, className = '' }: Props) {
       <div
         id={`ymap-${mapId}`}
         ref={elRef}
-        className={`min-h-[280px] w-full overflow-hidden rounded-2xl border border-[var(--cm-line-strong)] bg-[var(--cm-sand)] md:min-h-[360px] ${className}`}
+        className={`min-h-[280px] w-full overflow-hidden rounded-2xl border-2 border-[var(--cm-line-strong)] bg-[#f0ebe3] shadow-inner sepia-[.12] contrast-[.96] md:min-h-[360px] ${className}`}
       />
     </>
   )

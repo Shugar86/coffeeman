@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Playfair_Display } from 'next/font/google'
+import { Great_Vibes, Inter, Playfair_Display } from 'next/font/google'
 import './globals.css'
 
 const playfair = Playfair_Display({
@@ -10,6 +10,12 @@ const playfair = Playfair_Display({
 const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin', 'latin-ext', 'cyrillic'],
+})
+
+const greatVibes = Great_Vibes({
+  variable: '--font-great-vibes',
+  weight: '400',
+  subsets: ['latin'],
 })
 
 export const metadata: Metadata = {
@@ -24,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body className={`${playfair.variable} ${inter.variable} font-sans antialiased`}>
+      <body className={`${playfair.variable} ${inter.variable} ${greatVibes.variable} font-sans antialiased`}>
         {children}
       </body>
     </html>

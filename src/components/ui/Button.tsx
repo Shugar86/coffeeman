@@ -15,6 +15,8 @@ const variants = {
   neutralOutline:
     'border border-[var(--cm-line-strong)] bg-white text-[var(--cm-ink)] hover:bg-[var(--cm-sand)] active:bg-[var(--cm-line)]',
   ghost: 'bg-transparent text-[var(--cm-ink-muted)] hover:bg-black/[0.04] active:bg-black/[0.08]',
+  light:
+    'bg-white text-[var(--cm-maroon)] shadow-sm hover:bg-[var(--cm-cream)] active:bg-[var(--cm-cream-dark)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white border border-white/40',
 } as const
 
 const sizes = {

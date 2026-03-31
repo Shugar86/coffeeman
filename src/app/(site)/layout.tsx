@@ -1,5 +1,6 @@
 import { Footer } from '@/components/site/Footer'
 import { Header } from '@/components/site/Header'
+import { SiteMain } from '@/components/site/SiteMain'
 import { getPayloadClient } from '@/lib/payload'
 import React from 'react'
 
@@ -19,7 +20,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   return (
     <div className="coffee-site flex min-h-screen flex-col">
       <Header />
-      <div className="flex-1">{children}</div>
+      <SiteMain>{children}</SiteMain>
       <Footer
         companyName={site.companyName}
         phone={site.phone}
