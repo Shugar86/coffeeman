@@ -1,17 +1,33 @@
-# CoffeeMan
+# ☕ CoffeeMan
 
 > Интернет-магазин кофе и чая, в котором хочется задержаться — как в любимой кофейне у дома.
 
 <!-- badge-линия -->
-[![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-8B1538.svg)](./LICENSE)
+[![Version](https://img.shields.io/badge/version-0.1.0-5D4037.svg)](./CHANGELOG.md)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev/)
 [![Payload CMS](https://img.shields.io/badge/Payload-3-8B1538)](https://payloadcms.com/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791)](https://www.postgresql.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql)](https://www.postgresql.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss)](https://tailwindcss.com/)
+[![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker)](./docker-compose.yml)
+
+```text
+        ( (
+         ) )
+      ........
+      |      |]
+      \      /
+       `----'
+   CoffeeMan
+```
 
 ## Что это
 
-**CoffeeMan** — полноценная витрина кофе и чая с корзиной, оформлением заказа, блогом и картой кофеен. Сделан на Next.js 15 с Payload CMS 3 в роли админки и PostgreSQL под капотом.
+**CoffeeMan** — полноценная витрина кофе и чая с корзиной, оформлением заказа, блогом и картой кофеен. Сделан на **Next.js 15** с **Payload CMS 3** в роли админки и **PostgreSQL** под капотом.
 
-Проект родился как способ быстро собрать красивый e-commerce без связывания пяти разных сервисов. Вдохновлён тёплыми макетами из Pixso: бежевые фоны, акцентный марсала, эффекты «рваной бумаги» и полароидов.
+Проект родился как способ быстро собрать красивый e-commerce без связывания пяти разных сервисов. Вдохновлён тёплыми макетами из Pixso: бежевые фоны, акцентный марсала, эффекты «рваной бумаги» и полароидов. Цель — чтобы покупатель чувствовал себя не на сайте, а в уютной кофейне.
 
 ## Возможности
 
@@ -20,7 +36,9 @@
 - ☕ **Карта кофеен** на Яндекс.Картах
 - 📝 **Блог** со статьями и галереей
 - ⚙️ **Админка Payload** для товаров, заказов, категорий, страниц и настроек
+- 🎨 **Дизайн-система** из Pixso: цвета, типографика, компоненты, эффекты
 - 🐳 **Docker-окружение** для локальной разработки и продакшена
+- 🧪 **Скрипты проверки** качества данных и схемы
 
 ## Быстрый старт
 
@@ -46,52 +64,123 @@ npx cross-env NODE_OPTIONS=--no-deprecation payload migrate
 npm run dev
 ```
 
+После запуска:
+
 - Витрина: [http://localhost:3000](http://localhost:3000)
 - Админка: [http://localhost:3000/admin](http://localhost:3000/admin) — создай первого пользователя при первом входе.
 
+> 💡 Если Docker недоступен, убедись, что `DATABASE_URL` в `.env` указывает на рабочий PostgreSQL.
+
 ## Архитектура / стек
 
-| Область | Технология |
-|---------|------------|
-| Frontend | Next.js 15 (App Router), React 19, Tailwind CSS 4, Framer Motion |
-| CMS / Admin | Payload CMS 3 |
-| База данных | PostgreSQL 16 |
-| Валидация | Zod |
-| Состояние корзины | Zustand |
-| Почта | Nodemailer |
-| Контейнеризация | Docker + docker compose |
+```text
+┌─────────────────────────────────────────────────────────────┐
+│  Next.js 15 App Router                                      │
+│  ├── (site)      → витрина, каталог, корзина, блог          │
+│  └── (payload)   → админка / API                            │
+├─────────────────────────────────────────────────────────────┤
+│  Payload CMS 3  ──►  PostgreSQL 16                          │
+├─────────────────────────────────────────────────────────────┤
+│  Zustand (cart)  │  Zod (forms)  │  Nodemailer (mail)       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+| Область | Технология | Назначение |
+|---------|------------|------------|
+| Frontend | Next.js 15 (App Router), React 19 | SSR/SSG витрины и админки |
+| Стили | Tailwind CSS 4, `design-system.css` | Атомарные + кастомные стили |
+| Анимации | Framer Motion | Мягкие hover-эффекты и переходы |
+| CMS / Admin | Payload CMS 3 | Headless CMS, админка, API |
+| База данных | PostgreSQL 16 | Хранение товаров, заказов, контента |
+| Валидация | Zod | Формы оформления заказа |
+| Состояние корзины | Zustand | Локальный и персистентный стор |
+| Почта | Nodemailer | Уведомления менеджеру |
+| Контейнеризация | Docker + docker compose | Единое окружение dev/prod |
 
 ## Структура проекта
 
 ```text
 coffeeman/
 ├── src/
-│   ├── app/              # Next.js App Router: (site) + (payload) админка
-│   ├── collections/      # Payload: Products, Orders, Articles, Cafes и др.
-│   ├── components/       # React-компоненты: site, ui, catalog, cart, checkout
-│   ├── globals/          # Глобальные настройки Payload (SEO, доставка, оплата)
-│   ├── lib/              # Утилиты и хелперы
-│   ├── migrations/       # Миграции PostgreSQL
-│   ├── stores/           # Zustand-сторы (корзина)
-│   └── styles/           # design-system.css
-├── public/               # Статика и изображения
-├── design/               # Макеты, скриншоты и инструкции по Pixso
-├── scripts/              # Вспомогательные скрипты (бекап БД и т.д.)
-├── docker-compose.yml    # Локальная БД
-├── Dockerfile            # Продакшен-сборка Next.js standalone
-└── .env.example          # Шаблон переменных окружения
+│   ├── app/                    # Next.js App Router
+│   │   ├── (site)/             # Публичная витрина
+│   │   │   ├── about/
+│   │   │   ├── blog/
+│   │   │   ├── cafes/
+│   │   │   ├── cart/
+│   │   │   ├── catalog/
+│   │   │   ├── checkout/
+│   │   │   ├── contacts/
+│   │   │   ├── delivery/
+│   │   │   └── thank-you/
+│   │   └── (payload)/          # Админка и API Payload
+│   ├── collections/            # Payload: Products, Orders, Articles, Cafes и др.
+│   ├── components/             # React-компоненты
+│   │   ├── blog/
+│   │   ├── cart/
+│   │   ├── catalog/
+│   │   ├── checkout/
+│   │   ├── product/
+│   │   ├── site/
+│   │   └── ui/
+│   ├── globals/                # Глобальные настройки (SEO, доставка, оплата, сайт)
+│   ├── lib/                    # Утилиты и хелперы
+│   ├── migrations/             # Миграции PostgreSQL
+│   ├── stores/                 # Zustand-сторы (корзина)
+│   └── styles/                 # design-system.css
+├── public/                     # Статика и изображения
+├── design/                     # Макеты, скриншоты и инструкции по Pixso
+├── scripts/                    # Вспомогательные скрипты
+│   ├── backup-db.sh            # Бэкап PostgreSQL
+│   └── verify-products-images.mjs
+├── docker-compose.yml          # Локальная БД
+├── Dockerfile                  # Продакшен-сборка Next.js standalone
+├── next.config.ts              # Конфиг Next.js
+├── payload.config.ts           # Конфиг Payload
+├── tsconfig.json               # TypeScript
+└── .env.example                # Шаблон переменных окружения
+```
+
+## Примеры
+
+### Добавить товар через админку
+
+1. Открой [http://localhost:3000/admin](http://localhost:3000/admin).
+2. Создай пользователя при первом входе.
+3. В коллекции **Products** добавь товар: название, цену, изображения, категорию, страну.
+4. Сохрани — товар появится в каталоге.
+
+### Оформить заказ
+
+```bash
+# 1. Запусти dev-сервер
+npm run dev
+
+# 2. Открой http://localhost:3000/catalog
+# 3. Добавь товары в корзину
+# 4. Перейди к оформлению — форма валидируется через Zod
+```
+
+### Применить миграции после изменения коллекции
+
+```bash
+npx cross-env NODE_OPTIONS=--no-deprecation payload migrate
+npm run generate:types
+npm run generate:importmap
 ```
 
 ## Скрипты
 
 | Команда | Назначение |
-|--------|------------|
+|---------|------------|
 | `npm run dev` | Разработка Next.js |
-| `npm run build` / `npm start` | Продакшен-сборка и запуск |
+| `npm run build` | Продакшен-сборка |
+| `npm start` | Запуск собранного приложения |
 | `npm run lint` | ESLint |
 | `npm run generate:importmap` | Обновить admin import map Payload |
 | `npm run generate:types` | Сгенерировать `payload-types.ts` |
 | `npx payload migrate` | Применить миграции БД |
+| `npm run verify:upload` | Проверить схему загрузок товаров |
 
 ## Дизайн
 
@@ -104,16 +193,32 @@ coffeeman/
 Сборка и деплой через Docker:
 
 ```bash
-# В .env укажи PAYLOAD_SECRET и NEXT_PUBLIC_SERVER_URL=https://<твой-домен>
-docker compose up -d --build coffeeman-db coffeeman-web
-docker compose exec coffeeman-web npx payload migrate
+# В .env укажи PAYLOAD_SECRET, DATABASE_URL и NEXT_PUBLIC_SERVER_URL=https://<твой-домен>
+docker build --build-arg PAYLOAD_SECRET="$PAYLOAD_SECRET" -t coffeeman .
+docker run -d -p 3000:3000 --env-file .env --name coffeeman-web coffeeman
 ```
+
+После запуска контейнера примени миграции:
+
+```bash
+docker exec coffeeman-web npx payload migrate
+```
+
+> 💡 `docker-compose.yml` поднимает только PostgreSQL для разработки. Для продакшена используй Dockerfile напрямую или свой оркестратор.
 
 Бэкап базы: [`scripts/backup-db.sh`](./scripts/backup-db.sh).
 
+## Дорожная карта / CHANGELOG
+
+См. [CHANGELOG.md](./CHANGELOG.md).
+
+## Участие
+
+Идеи, баг-репорты и PR приветствуются — см. [CONTRIBUTING.md](./CONTRIBUTING.md).
+
 ## Лицензия
 
-MIT — см. [LICENSE](./LICENSE).
+[MIT](./LICENSE) © 2026 Shugar86
 
 ---
 

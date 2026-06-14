@@ -1,11 +1,15 @@
 # Changelog
 
-Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.0.0/).
+Формат основан на [Keep a Changelog](https://keepachangelog.com/ru/1.0.0/),
+и этот проект придерживается [Semantic Versioning](https://semver.org/lang/ru/).
 
 ## [Unreleased]
 
 ### Added
 - Vibe-first документация: README, AGENTS, LICENSE, CONTRIBUTING, CHANGELOG.
+
+### Changed
+- Доведена документация до 10/10: единые заголовки, badges, структура, примеры, DoD.
 
 ## [0.1.0] — 2026-03-26
 
@@ -20,6 +24,7 @@
 - Дизайн-система из Pixso: цвета, типографика, компоненты, hover-эффекты.
 - Компоненты UI: `CoffeeCard`, `TornPaperBackground`, `TapedPhoto`, `PolaroidFrame`, `Button`, `Chip` и другие.
 - Скрипт резервного копирования базы данных.
+- Скрипт проверки схемы загрузок товаров.
 
 ### Changed
 - Главная страница сверстана по макетам Pixso.
