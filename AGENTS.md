@@ -58,7 +58,6 @@ CoffeeMan — интернет-магазин кофе и чая с катало
 - **Текущая ветка**: `main`.
 - **Remotes**:
   - `origin` — GitHub (`git@github.com:Shugar86/coffeeman.git`)
-  - `vds` — VDS (`vds-root:/root/git/coffeeman.git`)
 
 ## 6. Definition of Done
 
